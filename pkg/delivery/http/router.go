@@ -55,8 +55,8 @@ func SetupRouter(app *fiber.App, db *gorm.DB) {
 	sso.Post("/logout", ssoHandler.Logout)
 	sso.Get("/userinfo", ssoHandler.GetUserInfo, middleware.RequireJWTAuth())
 
-	// 2. Admin Management Routes
-	admin := api.Group("/admin")
+	// 2. Admin Management Routes (requires master admin session)
+	admin := api.Group("/admin", middleware.RequireAdminAuth(db))
 	admin.Get("/stats", adminHandler.GetStats)
 
 	// Connected Apps
