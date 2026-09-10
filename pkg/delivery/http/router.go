@@ -1,6 +1,9 @@
 package http
 
 import (
+	"os"
+	"strings"
+
 	"github.com/Mini-Project-MDP/sso-service/pkg/delivery/http/handler"
 	"github.com/Mini-Project-MDP/sso-service/pkg/delivery/http/middleware"
 	"github.com/Mini-Project-MDP/sso-service/pkg/service"
@@ -13,13 +16,22 @@ import (
 func SetupRouter(app *fiber.App, db *gorm.DB) {
 	// Global Middlewares
 	app.Use(logger.New())
+
+	// CORS: baca dari env ALLOWED_ORIGINS (comma-separated), fallback ke localhost
+	allowedOrigins := []string{
+		"http://localhost:5173",
+		"http://localhost:5174",
+		"http://localhost:3000",
+		"http://localhost:3001",
+	}
+	if envOrigins := os.Getenv("ALLOWED_ORIGINS"); envOrigins != "" {
+		for _, o := range strings.Split(envOrigins, ",") {
+			allowedOrigins = append(allowedOrigins, strings.TrimSpace(o))
+		}
+	}
+
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: []string{
-			"http://localhost:5173",
-			"http://localhost:5174",
-			"http://localhost:3000",
-			"http://localhost:3001",
-		},
+		AllowOrigins:     allowedOrigins,
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowCredentials: true,
