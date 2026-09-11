@@ -23,6 +23,8 @@ func SetupRouter(app *fiber.App, db *gorm.DB) {
 		"http://localhost:5174",
 		"http://localhost:3000",
 		"http://localhost:3001",
+		"https://sso-frontend-alpha.vercel.app",
+		"https://asset-system-frontend.vercel.app",
 	}
 	if envOrigins := os.Getenv("ALLOWED_ORIGINS"); envOrigins != "" {
 		for _, o := range strings.Split(envOrigins, ",") {

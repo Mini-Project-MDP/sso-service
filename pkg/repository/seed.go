@@ -95,7 +95,7 @@ func SeedData(db *gorm.DB) error {
 			Name:          "Mayora Asset System",
 			ClientID:      "app_asset_mgmt_123",
 			ClientSecret:  "secret_asset_mgmt_999",
-			RedirectURIs:  "http://localhost:5173/sso/callback,http://localhost:5173/auth/callback,http://localhost:5174/sso/demo-client",
+			RedirectURIs:  "http://localhost:5173/sso/callback,http://localhost:5173/auth/callback,http://localhost:5174/sso/demo-client,https://asset-system-frontend.vercel.app/sso/callback,https://asset-system-frontend.vercel.app/auth/callback",
 			LogoURL:       "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=100&auto=format&fit=crop",
 			Description:   "Corporate Asset Tracking, Fulfillment, & Approval System",
 			AllowedScopes: "openid profile email roles",
