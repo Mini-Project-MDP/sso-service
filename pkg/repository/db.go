@@ -9,6 +9,7 @@ import (
 	"github.com/Mini-Project-MDP/sso-service/pkg/domain"
 	"github.com/joho/godotenv"
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
+	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -17,13 +18,26 @@ import (
 func InitDB(dbPath string) (*gorm.DB, error) {
 	_ = godotenv.Load()
 
+	dbURL := os.Getenv("DATABASE_URL")
+	if dbURL == "" {
+		dbURL = os.Getenv("SUPABASE_DATABASE_URL")
+	}
+	if dbURL == "" {
+		dbURL = os.Getenv("POSTGRES_URL")
+	}
+
 	tursoURL := os.Getenv("TURSO_DATABASE_URL")
 	tursoToken := os.Getenv("TURSO_AUTH_TOKEN")
 
 	var db *gorm.DB
 	var err error
 
-	if strings.HasPrefix(tursoURL, "libsql://") || strings.HasPrefix(tursoURL, "https://") {
+	if strings.HasPrefix(dbURL, "postgres://") || strings.HasPrefix(dbURL, "postgresql://") {
+		log.Println("Connecting to Supabase / PostgreSQL Database...")
+		db, err = gorm.Open(postgres.Open(dbURL), &gorm.Config{
+			Logger: logger.Default.LogMode(logger.Info),
+		})
+	} else if strings.HasPrefix(tursoURL, "libsql://") || strings.HasPrefix(tursoURL, "https://") {
 		dsn := fmt.Sprintf("%s?authToken=%s", tursoURL, tursoToken)
 		log.Printf("Connecting to Turso libSQL Cloud Database (%s)...\n", tursoURL)
 		db, err = gorm.Open(sqlite.New(sqlite.Config{
